@@ -1,4 +1,4 @@
-from tkinter import Tk,LabelFrame, Entry, Button,Label, IntVar,END
+from tkinter import Tk,LabelFrame, Entry, Button,Label, IntVar,END,INSERT,Text
 from grafica import Grafica,FxCuadratica
 
 class app(Tk):
@@ -61,6 +61,9 @@ class app(Tk):
         
         self.btnMatriz = Button(self.menu,text="Matriz",command=lambda: self.grafica.crearMastriz())
         self.btnMatriz.grid(column=0,row=5,sticky="SNEW")
+        
+        self.cajaTexto = Text(self.menu)
+        self.cajaTexto.grid(column=0,row=6,sticky="SNEW",columnspan=2)
     def insertValores(self):
         self.entradaNpuntos.insert(END,6)
         self.entradaA.insert(END,-100)
@@ -90,15 +93,15 @@ class app(Tk):
         
         h = (B - A) / nPuntos
         op1 = f"h =  ({B} - ({A})) / {nPuntos}  = {h} \n"
-        
-        print(op1)
-
+        self.mostrarProcedimiento(op1)
+        self.mostrarProcedimiento('|-----------------Calcular el punto de corte-----------------| \n')
         listaPuntos = []
         for i in range(0,nPuntos +1):
             listaPuntos.append(A + (i * h))
-            print('|------------------------------------------------------------|')
-            print(f"|     x{i}     |     {A} + ({i} x {h})|      {A + (i * h)}")
-        print('|------------------------------------------------------------|')
+            self.mostrarProcedimiento('|------------------------------------------------------------|')
+            self.mostrarProcedimiento(f"|     x{i}     |     {A} + ({i} x {h})|      {A + (i * h)}")
+        self.mostrarProcedimiento('|------------------------------------------------------------| \n')
+        self.mostrarProcedimiento('|-----------------Calcular por cada intervalo----------------| \n')
         listaFx = []
         for i in range(0,nPuntos+1):
             x1 = listaPuntos[i]
@@ -116,17 +119,22 @@ class app(Tk):
                                              px2=x2, py2=0,
                                              px3=x2, py3=FxCuadratica(a,b,c,x2/10),
                                              px4=x1, py4=FxCuadratica(a,b,c,x1/10))
-            print(f"|  x = {x1} |Fx(x)|  = ({a})x² + ({b})x + ({c}) = {y1}")
+            self.mostrarProcedimiento(f"|  x = {x1} |Fx(x)|  = ({a})x² + ({b})x + ({c}) = {y1}")
             listaFx.append(y1)
         
-        
+        opDeArea = ""
         valorFinal = 0
         for i,fx in enumerate(listaFx):
             if i == 0 or i == len(listaFx)- 1:
                 valorFinal = valorFinal + fx
+                opDeArea += f'{fx}'
             else:
                 valorFinal = valorFinal + (2 * fx)
-        
+                opDeArea += f' + 2({fx}) '
+                
         valorFinal = valorFinal * (h / 2)
-        print(valorFinal)            
+        opDeArea += f" ({h} / 2) = {str(valorFinal)}"
+        self.mostrarProcedimiento(opDeArea)
+    def mostrarProcedimiento(self,text:str):
+        self.cajaTexto.insert(INSERT, text+ '\n')
 app()        
